@@ -1,6 +1,6 @@
 //! Aufgabe 2.1: Primzahltest
 
-fn main() 
+fn main()
 {
     for x in 1..21
     {
@@ -19,7 +19,7 @@ fn is_prime(zahl: i64) -> bool
 {
     let mut upper_limit: i64 = zahl;
     let mut x: i64 = 3;
-    
+
     if zahl == 1
     {
         return false;
@@ -47,12 +47,12 @@ fn is_prime(zahl: i64) -> bool
             x = x + 2;
         }
     }
-    
+
     return true;
 }
 
 #[test]
-fn small_primes() 
+fn small_primes()
 {
     assert!(is_prime(2));
     assert!(is_prime(3));
@@ -71,7 +71,7 @@ fn small_composites()
 }
 
 #[test]
-fn large_primes() 
+fn large_primes()
 {
     assert!(is_prime(1_300_769));
     assert!(is_prime(1_300_297));
@@ -79,7 +79,7 @@ fn large_primes()
 }
 
 #[test]
-fn large_composites() 
+fn large_composites()
 {
     assert!(!is_prime(908_209));
     assert!(!is_prime(3_073_009));
