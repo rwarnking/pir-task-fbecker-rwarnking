@@ -1,8 +1,8 @@
-fn main() 
+fn main()
 {
     let mut arr = [61, 21, 27, 79, 57, 60, 46, 42, 27, 92, 66, 26];
     println!("{:?}", arr);
-    
+
     sort(&mut arr);
     // print `arr`
     println!("{:?}", arr);
@@ -14,7 +14,7 @@ fn sort(arr: &mut [u64])
     let mut zeiger = 0;
     let mut min = arr[zeiger];
     let mut pos = 0;
-    
+
     while zeiger < arr.len()
     {
         for x in zeiger+1..arr.len()
@@ -38,7 +38,7 @@ fn sort(arr: &mut [u64])
 }
 
 #[test]
-fn sort_array() 
+fn sort_array()
 {
     let mut arr =  [
         61, 21, 27, 79, 57, 60, 46, 92, 66, 26, 37, 15, 29, 70, 30, 55, 62, 81,
