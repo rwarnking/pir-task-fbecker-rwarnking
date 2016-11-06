@@ -3,8 +3,8 @@
 
 **Gruppe**:
 
-- *Susi Sorglos*
-- *Willi Wacker*
+- *Franziska Becker*
+- *René  Warnking*
 
 ---
 
