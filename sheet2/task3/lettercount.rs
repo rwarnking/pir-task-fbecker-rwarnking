@@ -20,5 +20,5 @@ fn count(string: &str, letter: char) -> i32
         }
     }
 
-    letter_count;
+    letter_count
 }
