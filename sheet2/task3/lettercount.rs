@@ -11,18 +11,14 @@ fn main()
 // write `count()` function
 fn count(string: &str, letter: char) -> i32
 {
-    //let count = string.chars().count();
     let mut letter_count = 0;
 
-    //let mut chars = string.chars();
+    for x in string.chars() {
 
-    for x in string.chars()
-    {
-        if x==letter
-        {
-            letter_count = letter_count + 1;
+        if x==letter {
+            letter_count += 1;
         }
     }
 
-    return letter_count;
+    letter_count;
 }

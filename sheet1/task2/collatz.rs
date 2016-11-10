@@ -1,20 +1,19 @@
 fn main() {
 
-    let mut x: i32 = 27;
-    let mut y: i32 = 0;
+    let mut x = 27;
+    let mut y = 0;
 
-    while x != 1
-    {
+    while x != 1 {
+
         println!("{} -> {}", y, x);
-        if x%2==0
-        {
+
+        if x % 2 == 0 {
             x = x / 2;
         }
-        else
-        {
+        else {
             x = 3 * x + 1;
         }
-        y = y + 1;
+        y += 1;
     }
     println!("{} -> {}", y, x);
 }

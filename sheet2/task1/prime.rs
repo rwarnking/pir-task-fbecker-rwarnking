@@ -1,50 +1,43 @@
 //! Aufgabe 2.1: Primzahltest
 
-fn main()
-{
-    for x in 1..21
-    {
-        if is_prime(x)
-        {
+fn main() {
+
+    for x in 1..21 {
+
+        if is_prime(x) {
             println!("{}*", x);
         }
-        else
-        {
+        else {
             println!("{}", x);
         }
     }
 }
 
-fn is_prime(zahl: i64) -> bool
-{
-    let mut upper_limit: i64 = zahl;
-    let mut x: i64 = 3;
+fn is_prime(zahl: i64) -> bool {
 
-    if zahl == 1
-    {
+    let mut upper_limit = zahl;
+    let mut x = 3;
+
+    if zahl == 1 {
         return false;
     }
-    else if zahl == 2
-    {
+    else if zahl == 2 {
         return true;
     }
-    else if zahl % 2 == 0
-    {
+    else if zahl % 2 == 0 {
         return false;
     }
-    else
-    {
-        while zahl < upper_limit * upper_limit
-        {
+    else {
+
+        while zahl < upper_limit * upper_limit {
             upper_limit = upper_limit - 1;
         }
-        while x <= upper_limit
-        {
-            if zahl % x == 0
-            {
+        while x <= upper_limit {
+
+            if zahl % x == 0 {
                 return false;
             }
-            x = x + 2;
+            x += 2;
         }
     }
 
