@@ -313,7 +313,6 @@ impl Stats {
     ///
     /// [1]: http://bulbapedia.bulbagarden.net/wiki/File:HPStatCalcGen34.png
     /// [2]: http://bulbapedia.bulbagarden.net/wiki/File:OtherStatCalcGen34.png
-    
     fn at_level(base: Self, level: u8) -> Self {
         /// The formula is the same for all stats != hp
         fn stat_formula(base: u16, level: u8) -> u16 {
