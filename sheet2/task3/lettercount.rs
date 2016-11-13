@@ -1,5 +1,5 @@
-fn main()
-{
+fn main() {
+
     let string = "Peter";
     let letter = 'e';
 
@@ -9,13 +9,13 @@ fn main()
 }
 
 // write `count()` function
-fn count(string: &str, letter: char) -> i32
-{
+fn count(string: &str, letter: char) -> u32 {
+
     let mut letter_count = 0;
 
     for x in string.chars() {
 
-        if x==letter {
+        if x == letter {
             letter_count += 1;
         }
     }
