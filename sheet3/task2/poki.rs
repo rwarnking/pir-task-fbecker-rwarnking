@@ -16,7 +16,7 @@ fn main() {
 
     while !finished {
         println!(">>>> Status: {} has {} HP, {} has {} HP", red_pokemon.name(),
-red_pokemon.stats().hp, blue_pokemon.name(), blue_pokemon.stats().hp,);
+red_pokemon.stats().hp, blue_pokemon.name(), blue_pokemon.stats().hp);
         // do one turn for each player
         for _ in 0..2 {
             let (attacker, defender, attacks) = match turn {
@@ -241,27 +241,27 @@ impl Pokemon {
             level: l,
         }
     }
-    
+
     fn model(&self) -> &PokemonModel {
         self.model
     }
-    
+
     fn stats(&self) -> Stats {
         self.stats.get()
     }
-    
+
     fn level(&self) -> u8 {
         self.level
     }
-    
+
     fn name(&self) -> &str {
         self.model.name
     }
-    
+
     fn is_alive(&self) -> bool {
         if self.stats.get().hp > 0 {true} else {false}
     }
-    
+
     fn endure_attack(&self, other: &Pokemon, att: &Attack) {
         // calculate incoming damage
         let damage = attack_damage(self, other, *att);
@@ -269,7 +269,7 @@ impl Pokemon {
         // else just set it to current health - damage
         let new_hp = if damage > self.stats.get().hp { 0 } else { self.stats.get().hp - damage };
         self.stats.set(Stats {
-            hp: new_hp, 
+            hp: new_hp,
             speed: self.stats.get().speed,
             attack: self.stats.get().attack,
             special_attack: self.stats.get().special_attack,
@@ -366,7 +366,7 @@ fn attack_damage(attacker: &Pokemon, defender: &Pokemon, attack: Attack) -> u16 
     let base_power = attack.base_power as f64;
     let attacker_level = attacker.level() as f64;
 
-    // The modifier only depends on the type effectiveness (in our simplified  
+    // The modifier only depends on the type effectiveness (in our simplified
     // version!).
     let modifier = match defender.model().type_ {
         PokemonType::One(ty) => {
