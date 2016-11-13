@@ -46,7 +46,7 @@ fn read_input() -> Vec<bool> {
                 break;
             }
         }
-        buffer.trim().to_string()
+        buffer.trim().to_string();
     };
 
     // construct bool vector from string
@@ -62,14 +62,15 @@ fn read_input() -> Vec<bool> {
 }
 
 // returns a vector containing the next step for each cell of 'old' according to the rules
-fn next_step(old: &Vec<bool>) -> Vec<bool> {
+fn next_step(old: &[bool]) -> Vec<bool> {
     let mut changed = Vec::new();
+    let old_owned = old.to_owned();
 
-    for index in 0..old.len() {
+    for index in 0..old_owned.len() {
         // if we are at the first element, set previous element as the last
-        let mut prev = if index == 0 { old.len() - 1 } else { index - 1 };
+        let prev = if index == 0 { old.len() - 1 } else { index - 1 };
         // if we are at the last element, set next element as the first
-        let mut next = if index == old.len() - 1 { 0 } else { index + 1 };
+        let next = if index == old.len() - 1 { 0 } else { index + 1 };
         // implements rule 1_1 -> 101, (1_0 || 0_1) -> _1_, 0_0 -> 000
         let new_value = match old[prev] && old[next] {
             true => false,
