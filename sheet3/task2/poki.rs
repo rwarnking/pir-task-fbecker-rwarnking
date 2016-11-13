@@ -15,8 +15,8 @@ fn main() {
     let mut turn = 0;
 
     while !finished {
-        println!(">>>> Status: {} has {} HP, {} has {} HP", red_pokemon.name(), red_pokemon.stats().hp,
-                 blue_pokemon.name(), blue_pokemon.stats().hp,);
+        println!(">>>> Status: {} has {} HP, {} has {} HP", red_pokemon.name(),
+                 red_pokemon.stats().hp, blue_pokemon.name(), blue_pokemon.stats().hp,);
         // do one turn for each player
         for _ in 0..2 {
             let (attacker, defender, attacks) = match turn {
@@ -52,7 +52,8 @@ fn main() {
                 },
                 _ => 0,
             };
-            println!("{} used {}! ({} has {} HP left)", attacker, attacks[choice].name, defender, remaining_hp);
+            println!("{} used {}! ({} has {} HP left)",
+                     attacker, attacks[choice].name, defender, remaining_hp);
 
             finished = match turn {
                 1 => {
