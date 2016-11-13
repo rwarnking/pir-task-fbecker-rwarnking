@@ -46,7 +46,7 @@ fn read_input() -> Vec<bool> {
                 break;
             }
         }
-        buffer.trim().to_string();
+        buffer.trim().to_string()
     };
 
     // construct bool vector from string
