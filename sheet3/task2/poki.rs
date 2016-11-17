@@ -58,12 +58,18 @@ fn main() {
             finished = match turn {
                 1 => {
                     turn = 2;
-                    if !blue_pokemon.is_alive() { println!("{} fainted!", defender); true }
+                    if !blue_pokemon.is_alive() {
+                        println!("{} fainted!", defender);
+                        true
+                    }
                     else { false }
                 },
                 2 => {
                     turn = 1;
-                    if !red_pokemon.is_alive() { println!("{} fainted!", defender); true }
+                    if !red_pokemon.is_alive() {
+                        println!("{} fainted!", defender);
+                        true
+                    }
                     else { false }
                 },
                 _ => { true },
@@ -80,11 +86,11 @@ fn choose_pokemon(player: &str) -> &'static PokemonModel {
     loop {
         println!("Player {}, please choose a Pokemon (or type '?' to get a complete list)",player);
         let answer = read_string();
-        if answer == "?".to_string() {
+        if answer == "?" {
             print_pokemon_list();
         } else {
             let pokemon = find_pokemon_by_name(answer);
-            if !pokemon.is_none() {
+            if pokemon.is_some() {
                 return pokemon.unwrap();
             }
         }
@@ -99,7 +105,7 @@ fn print_pokemon_list() {
 
 fn find_pokemon_by_name(look_for: String) -> Option<&'static PokemonModel> {
     for pokemon in POKEDEX {
-        if pokemon.name == look_for.as_str() {
+        if pokemon.name == look_for {
             return Some(pokemon);
         }
     }
