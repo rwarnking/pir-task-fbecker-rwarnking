@@ -7,71 +7,74 @@ fn main() {
     let blue = choose_pokemon("Blue");
     println!("You have chosen {}!", blue.name);
 
-    let red_pokemon = Pokemon::with_level(red, 5);
-    let blue_pokemon = Pokemon::with_level(blue, 5);
+    let mut red_pokemon = Pokemon::with_level(red, 5);
+    let mut blue_pokemon = Pokemon::with_level(blue, 5);
     // controls when to exit loop, set to false if one pokemon faints
     let mut finished = false;
     // 0 = no one's turn (determine by speed), 1 = player red's turn, 2 = player blue's turn
     let mut turn = 0;
 
     while !finished {
-        println!(">>>> Status: {} has {} HP, {} has {} HP", red_pokemon.name(),
-red_pokemon.stats().hp, blue_pokemon.name(), blue_pokemon.stats().hp);
-        // do one turn for each player
+        println!(">>>> Status: {} has {} HP, {} has {} HP", red_pokemon.model().name,
+                 red_pokemon.stats().hp, blue_pokemon.model().name, blue_pokemon.stats().hp);
+        // For each turn
         for _ in 0..2 {
-            let (attacker, defender, attacks) = match turn {
+            let (attacker, defender, att) = match turn {
                 0 => {
                     if red_pokemon.stats().speed > blue_pokemon.stats().speed {
                         turn = 1;
-                        (red_pokemon.name(), blue_pokemon.name(), red_pokemon.model().attacks)
+                        (red_pokemon.model().name, blue_pokemon.model().name, red_pokemon.model().attacks)
                     } else {
                         turn = 2;
-                        (blue_pokemon.name(), red_pokemon.name(), blue_pokemon.model().attacks)
+                        (blue_pokemon.model().name, red_pokemon.model().name, blue_pokemon.model().attacks)
                     }
                 },
-                1 => (red_pokemon.name(), blue_pokemon.name(), red_pokemon.model().attacks),
-                2 => (blue_pokemon.name(), red_pokemon.name(), blue_pokemon.model().attacks),
-                _ => (blue_pokemon.name(), red_pokemon.name(), blue_pokemon.model().attacks),
+                1 => (red_pokemon.model().name, blue_pokemon.model().name, red_pokemon.model().attacks),
+                2 => (blue_pokemon.model().name, red_pokemon.model().name, blue_pokemon.model().attacks),
+                _ => (blue_pokemon.model().name, red_pokemon.model().name, blue_pokemon.model().attacks),
             };
+
             println!(">>>> {} is about to attack! Which move shall it use?", attacker);
-            let mut att_index = 0;
-            for att in attacks {
-                println!("    {}: {}", att_index, att.name);
-                att_index += 1;
+            for att_index in 0..att.len() {
+                println!("    {}: {}", att_index, att[att_index].name);
             }
+
             println!("    Please enter the attack ID:");
             let choice = read_usize();
-            let remaining_hp = match  turn {
+
+            let remaining_hp = match turn {
                 1 => {
-                    blue_pokemon.endure_attack(&red_pokemon, attacks[choice]);
+                    blue_pokemon.endure_attack(&red_pokemon, red_pokemon.model().attacks[choice]);
                     blue_pokemon.stats().hp
                 },
                 2 => {
-                    red_pokemon.endure_attack(&blue_pokemon, attacks[choice]);
+                    red_pokemon.endure_attack(&blue_pokemon, blue_pokemon.model().attacks[choice]);
                     red_pokemon.stats().hp
                 },
                 _ => 0,
             };
+
             println!("{} used {}! ({} has {} HP left)",
-attacker, attacks[choice].name, defender, remaining_hp);
+                     attacker, att[choice].name, defender, remaining_hp);
 
             finished = match turn {
                 1 => {
                     turn = 2;
-                    if !blue_pokemon.is_alive() { println!("{} fainted!", defender); true }
-                    else { false }
+                    !blue_pokemon.is_alive()
                 },
                 2 => {
                     turn = 1;
-                    if !red_pokemon.is_alive() { println!("{} fainted!", defender); true }
-                    else { false }
+                    !red_pokemon.is_alive() 
                 },
                 _ => { true },
             };
 
-            if finished { break; }
+            if finished { 
+                println!("{} fainted!", defender);
+                break; 
+            }
         }
-        // only necessary if speed should dictate who attacks first
+        // Only necessary if speed should dictate who attacks first
         turn = 0;
     }
 }
@@ -80,11 +83,11 @@ fn choose_pokemon(player: &str) -> &'static PokemonModel {
     loop {
         println!("Player {}, please choose a Pokemon (or type '?' to get a complete list)",player);
         let answer = read_string();
-        if answer == "?".to_string() {
+        if answer == "?" {
             print_pokemon_list();
         } else {
             let pokemon = find_pokemon_by_name(answer);
-            if !pokemon.is_none() {
+            if pokemon.is_some() {
                 return pokemon.unwrap();
             }
         }
@@ -99,7 +102,7 @@ fn print_pokemon_list() {
 
 fn find_pokemon_by_name(look_for: String) -> Option<&'static PokemonModel> {
     for pokemon in POKEDEX {
-        if pokemon.name == look_for.as_str() {
+        if pokemon.name == look_for {
             return Some(pokemon);
         }
     }
@@ -229,7 +232,7 @@ struct PokemonModel {
 
 struct Pokemon {
     model: &'static PokemonModel,
-    stats: Cell<Stats>,
+    stats: Stats,
     level: u8,
 }
 
@@ -237,17 +240,17 @@ impl Pokemon {
     fn with_level(m: &'static PokemonModel, l: u8) -> Self {
         Pokemon {
             model: m,
-            stats: Cell::new(Stats::at_level(m.base_stats, l)),
+            stats: Stats::at_level(m.base_stats, l),
             level: l,
         }
     }
 
-    fn model(&self) -> &PokemonModel {
+    fn model(&self) -> &'static PokemonModel {
         self.model
     }
 
     fn stats(&self) -> Stats {
-        self.stats.get()
+        self.stats
     }
 
     fn level(&self) -> u8 {
@@ -259,24 +262,16 @@ impl Pokemon {
     }
 
     fn is_alive(&self) -> bool {
-        if self.stats.get().hp > 0 {true} else {false}
+        self.stats.hp > 0
     }
 
-    fn endure_attack(&self, other: &Pokemon, att: &Attack) {
-        // calculate incoming damage
-        let damage = attack_damage(self, other, *att);
-        // set new HP to 0 if damage is greater than current health (otherwise things go bonkers)
-        // else just set it to current health - damage
-        let new_hp = if damage > self.stats.get().hp { 0 } else { self.stats.get().hp - damage };
-        self.stats.set(Stats {
-            hp: new_hp,
-            speed: self.stats.get().speed,
-            attack: self.stats.get().attack,
-            special_attack: self.stats.get().special_attack,
-            defense: self.stats.get().defense,
-            special_defense: self.stats.get().special_defense
-            },
-        );
+    fn endure_attack(&mut self, other: &Pokemon, att: &Attack) {
+        // Calculate new hp
+        if let Some(new_hp) = self.stats.hp.checked_sub(attack_damage(self, other, *att)) {
+            self.stats.hp = new_hp;
+        } else {
+            self.stats.hp = 0;
+        }
     }
 }
 

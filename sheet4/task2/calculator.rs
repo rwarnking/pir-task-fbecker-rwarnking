@@ -81,7 +81,7 @@ impl Expr {
     fn parse(tokens: &[Token], mut index: usize) -> Result<(Self, usize), &str> {
         // node to integrate into the tree
         let mut node = Expr::Leaf(Token::Operation('+'));
-        // 0 = nothing, 1 = number, 2 = operator <= controls for checking if the input is valid
+        // 0 = nothing, 1 = first number, 2 = second number, 3 = operator <= controls for checking if the input is valid
         let mut current = 0;
 
         while index < tokens.len() {
@@ -90,17 +90,18 @@ impl Expr {
                 // this is the first Token, add a leaf to the tree
                 Token::Number(i32) => match current {
                     0 | 2 => { current = 1; node.add_leaf_child(tokens[index]) },
+                    3 => { current = 2; node.add_leaf_child(tokens[index]) },
                     _ => return Err("Input incorrect (maybe the order was wrong). Try again:"),
                 },
                 // If we find an operator and the previous Token was a number change the node data
                 Token::Operation(char) => match current {
-                    1 => { current = 2; node.data_mut().set_operation(tokens[index]) },
+                    1 => { current = 3; node.data_mut().set_operation(tokens[index]) },
                     _ => return Err("Input incorrect (maybe the order was wrong). Try again:"),
                 },
                 // If we find an opening bracket, and the previous Token was an operator or
                 // this is the first Token, add a leaf to the tree through recursion
                 Token::Open(char) => match current {
-                    0 | 2 => {
+                    0 => {
                         if let Ok((child, new_index)) = Expr::parse(tokens, index + 1) {
                             index = new_index;
                             node.add_child(child);
@@ -109,10 +110,19 @@ impl Expr {
                             return Err("Input incorrect (maybe the order was wrong). Try again:");
                         }
                     },
+                    3 => {
+                        if let Ok((child, new_index)) = Expr::parse(tokens, index + 1) {
+                            index = new_index;
+                            node.add_child(child);
+                            current = 2
+                        } else {
+                            return Err("Input incorrect (maybe the order was wrong). Try again:");
+                        }
+                    },
                     _ => return Err("Input incorrect (maybe the order was wrong). Try again:"),
                 },
                 // If we find a closing bracket return the current node
-                Token::Close(char) => return Ok((node, index)),
+                Token::Close(char) => { current = 0; return Ok((node, index)) },
             }
             index += 1;
         }
