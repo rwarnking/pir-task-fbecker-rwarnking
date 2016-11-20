@@ -158,18 +158,18 @@ impl Expr {
             while index < next.len() {
                 match next[index].is_leaf() {
                     true => match next[index+1].is_leaf() {
-                        true => return result + 
+                        true => return result +
                           Op::operation(self.data().char_data()).apply(next[index].data().number(),
                           next[index + 1].data().number()),
-                        false => { 
-                          result += 
+                        false => {
+                          result +=
                           Op::operation(self.data().char_data()).apply(next[index].data().number(),
                           next[index + 1].evaluate(result)); index += 1;
                         },
                     },
                     false => match next[index+1].is_leaf() {
-                        true => { 
-                          result += 
+                        true => {
+                          result +=
                         Op::operation(self.data().char_data()).apply(next[index].evaluate(result),
                           next[index + 1].data().number()); index += 1;
                         },
