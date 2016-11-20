@@ -1,41 +1,49 @@
 fn main() {
+
+    // Small helper function to test very basic (!) functionality
+    // test_tree("3 + ( 6 - 1 )");
+
     loop {
         // Read input from the user and just do nothing when the input is empty
         let input = read_string();
         if input.is_empty() {
             continue;
         }
-        if let Some(calc) = tokenize(&input) {
-            // Debug output
-            println!("{:#?}", calc);
-            let (tree, _) =  Expr::parse(&calc, 0);
-            println!("{:#?}", tree);
-            println!("{}", tree.evaluate(0));
-        } else {
-            println!("Input was invalid! Try again:");
-            continue;
-        };
+        // If tokenize and parse don't result in an error evaluate the tree
+       test_tree(&input);
     }
 }
 
-fn tokenize(line: &str) -> Option<Vec<Token>> {
+// Makes a tree from the given string and evaluates it if possible
+fn test_tree(line: &str) {
+    match tokenize(line) {
+        Ok(calc) => match Expr::parse(&calc, 0) {
+            Ok((tree, _)) => if let Some(result)=tree.evaluate(0){println!("Result: {}", result)},
+            Err(why) => println!("{}", why),
+        },
+        Err(why) => println!("{}", why),
+    };
+}
+
+// Split input into Tokens
+fn tokenize(line: &str) -> Result<Vec<Token>, &str> {
     let mut ret = Vec::new();
     let mut result = line.split_whitespace();
-
+    // Go through every character in every string
     while let Some(elem) = result.next() {
         for c in elem.chars() {
             match c {
                 '(' => ret.push(Token::Open( '(' )),
                 ')' => ret.push(Token::Close( ')' )),
                 '+' | '-' | '*' | '/' | '%' => ret.push(Token::Operation(c)),
-                _ => if c.is_numeric() {
-                    ret.push(Token::Number(c.to_digit(10).unwrap() as i32))
-                } else { return None },
+                _ => if let Some(num) = c.to_digit(10) {
+                    ret.push(Token::Number(num as i32))
+                } else { return Err("Something went wrong when trying to parse a number!") },
             }
         }
     };
 
-    Some(ret)
+    Ok(ret)
 }
 
 /// Reads a string from the user (with a nice prompt).
@@ -70,23 +78,45 @@ enum Expr {
 
 impl Expr {
 
-    fn parse(tokens: &[Token], mut index: usize) -> (Self, usize) {
-        let mut node = Expr::Internal{ children: vec![], data: Token::Operation('+') };
+    fn parse(tokens: &[Token], mut index: usize) -> Result<(Self, usize), &str> {
+        // node to integrate into the tree
+        let mut node = Expr::Leaf(Token::Operation('+'));
+        // 0 = nothing, 1 = number, 2 = operator <= controls for checking if the input is valid
+        let mut current = 0;
 
         while index < tokens.len() {
             match tokens[index] {
-                Token::Number(i32) => node.add_leaf_child(tokens[index]),
-                Token::Operation(char) => node.data_mut().set_operation(tokens[index]),
-                Token::Open(char) => {
-                    let (child, new_index) = Expr::parse(tokens, index + 1);
-                    index = new_index;
-                    node.add_child(child)
+                // If we find a number, and the previous Token was an operator or
+                // this is the first Token, add a leaf to the tree
+                Token::Number(i32) => match current {
+                    0 | 2 => { current = 1; node.add_leaf_child(tokens[index]) },
+                    _ => return Err("Input incorrect (maybe the order was wrong). Try again:"),
                 },
-                Token::Close(char) => return (node, index),
+                // If we find an operator and the previous Token was a number change the node data
+                Token::Operation(char) => match current {
+                    1 => { current = 2; node.data_mut().set_operation(tokens[index]) },
+                    _ => return Err("Input incorrect (maybe the order was wrong). Try again:"),
+                },
+                // If we find an opening bracket, and the previous Token was an operator or
+                // this is the first Token, add a leaf to the tree through recursion
+                Token::Open(char) => match current {
+                    0 | 2 => {
+                        if let Ok((child, new_index)) = Expr::parse(tokens, index + 1) {
+                            index = new_index;
+                            node.add_child(child);
+                            current = 1
+                        } else {
+                            return Err("Input incorrect (maybe the order was wrong). Try again:");
+                        }
+                    },
+                    _ => return Err("Input incorrect (maybe the order was wrong). Try again:"),
+                },
+                // If we find a closing bracket return the current node
+                Token::Close(char) => return Ok((node, index)),
             }
             index += 1;
         }
-        (node, index)
+        Ok((node, index))
     }
 
     /// Determines if this tree is just a leaf node.
@@ -152,35 +182,58 @@ impl Expr {
         }
     }
 
-    pub fn evaluate(&self, mut result: i32) -> i32 {
+    // Evaluate the tree recursively
+    pub fn evaluate(&self, mut result: i32) -> Option<i32> {
+        // Look at both children and return result depending on whether they are nested or not
         if let Some(next) = self.children() {
-            let mut index = 0;
-            while index < next.len() {
-                match next[index].is_leaf() {
-                    true => match next[index+1].is_leaf() {
-                        true => return result +
-                          Op::operation(self.data().char_data()).apply(next[index].data().number(),
-                          next[index + 1].data().number()),
-                        false => {
-                          result +=
-                          Op::operation(self.data().char_data()).apply(next[index].data().number(),
-                          next[index + 1].evaluate(result)); index += 1;
+            // If there are two children
+            if next.len() > 1 {
+                match next[0].is_leaf() {
+                    true => match next[1].is_leaf() {
+                        true => if let Ok(num_one) = next[0].data().number() {
+                            if let Ok(num_two) = next[1].data().number() {
+                                if let Ok(op) = self.data().char_data() {
+                                    return Some(result+Op::operation(op).apply(num_one, num_two));
+                                }
+                            }
+                        },
+                        false => if let Ok(num_one) = next[0].data().number() {
+                            if let Ok(op) = self.data().char_data() {
+                                if let Some(num_two) = next[1].evaluate(result) {
+                                    return Some(result+Op::operation(op).apply(num_one, num_two));
+                                }
+                            }
                         },
                     },
-                    false => match next[index+1].is_leaf() {
-                        true => {
-                          result +=
-                        Op::operation(self.data().char_data()).apply(next[index].evaluate(result),
-                          next[index + 1].data().number()); index += 1;
+                    false => match next[1].is_leaf() {
+                        true => if let Ok(num_two) = next[1].data().number() {
+                            if let Ok(op) = self.data().char_data() {
+                                if let Some(num_one) = next[0].evaluate(result) {
+                                    return Some(result+Op::operation(op).apply(num_one, num_two));
+                                }
+                            }
+                         },
+                        false => if let Ok(op) = self.data().char_data() {
+                            if let Some(num_one) = next[0].evaluate(result) {
+                                if let Some(num_two) = next[1].evaluate(result) {
+                                    return Some(result+Op::operation(op).apply(num_one, num_two));
+                                }
+                            }
                         },
-                        false => result += next[index].evaluate(result),
                     },
                 }
-                index += 1;
+            // If there is only one child
+            } else if next[0].is_leaf() {
+                if let Ok(num) = next[0].data().number() {
+                    return Some(num);
+                }
+            } else if let Ok(op) = self.data().char_data() {
+                if let Some(num) = next[0].evaluate(result) {
+                    return Some(num);
+                }
             }
-            return result;
         };
-        0
+        None
     }
 }
 
@@ -235,17 +288,17 @@ impl Token {
         }
     }
 
-    fn number(&self) -> i32 {
+    fn number(&self) -> Result<i32, &str> {
         match *self {
-            Token::Number(data) => data,
-            _ => 0,
+            Token::Number(data) => Ok(data),
+            _ => Err("Tried to get a number from a Token not containing a number."),
         }
     }
 
-    fn char_data(&self) -> char {
+    fn char_data(&self) -> Result<char, &str> {
         match *self {
-            Token::Number(i32) => ' ',
-            Token::Open(data) | Token::Close(data) | Token::Operation(data) => data,
+            Token::Open(data) | Token::Close(data) | Token::Operation(data) => Ok(data),
+            _ => Err("Tried to get a character from a Token not containing a character."),
         }
     }
 
