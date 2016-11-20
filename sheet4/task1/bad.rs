@@ -1,70 +1,49 @@
 // print if they are both
 fn main() -> () {
-    for iterationnumber in &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] {
-        let iterationnumber = *iterationnumber;
-        if !happy_prime(iterationnumber) {} else {
-            print!("{}", iterationnumber);
-            println!(" is a happy prime!");
+
+    for iterationnumber in 1..21 {
+        if happy_prime(iterationnumber) {
+            println!("{} is a happy prime!", iterationnumber);
         }
     }
-
 }
 
-// is it botH?
+// Is it both?
 fn happy_prime(n: i32) -> bool {
-    match check_if_number_is_happy(n) {
-        false => return false,
-        _ => {}
-    }
 
-    if check_if_number_is_prime(n) == true {
-        return true;
-    } else {
-        return false;
+    match check_if_number_is_happy(n) {
+        false => false,
+        _ => check_if_number_is_prime(n),
     }
 }
 
 // Is it a happy number? https://en.wikipedia.org/wiki/Happy_number
 fn check_if_number_is_happy(number: i32) -> bool {
-    let mut  number: i32= number;
-
-    while number > 1 {
-        let mut tmp = 0;
-        while number > 0 {
-            tmp = tmp + (number %10) * (number%10);
-            number = number / 10;
-        }
-        number = tmp;
-
-        // We ended up in a cycle -> not happy
-        if (number == 4) {
-            return false;
-        }
+    match number {
+        1 => true,
+        4 => false,
+        // noch nicht richtig
+        _ => {
+            let mut n = number;
+            let mut tmp = 0;
+            while n > 0 {
+                tmp += (n%10) * (n%10);
+                n = n/ 10;
+            }
+            check_if_number_is_happy(tmp)
+        },
     }
-
-    return true;
 }
 
 // is it priem?
 fn check_if_number_is_prime(n: i32) -> bool {
-    if n == 1 {
-        return false;
+    match n {
+        1 | 2 => false,
+        _ => {
+            for teiler in 2..n {
+                if n % teiler == 0 { return false; }
+            }
+            true
+        },
     }
-
-    if n == 2 {
-        return false;
-    }
-
-    let mut teilerGefunden:bool = false;
-
-    let mut teiler:i32= 2;
-    while (teiler < n) {
-        if (n % teiler == 0) {
-            teilerGefunden = true;
-        }
-        teiler = teiler + 1;
-    }
-
-    return !teilerGefunden;
 }
-
