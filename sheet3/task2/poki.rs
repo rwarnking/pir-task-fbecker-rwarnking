@@ -23,15 +23,25 @@ fn main() {
                 0 => {
                     if red_pokemon.stats().speed > blue_pokemon.stats().speed {
                         turn = 1;
-                        (red_pokemon.model().name, blue_pokemon.model().name, red_pokemon.model().attacks)
+                        (red_pokemon.model().name,
+                         blue_pokemon.model().name,
+                         red_pokemon.model().attacks)
                     } else {
                         turn = 2;
-                        (blue_pokemon.model().name, red_pokemon.model().name, blue_pokemon.model().attacks)
+                        (blue_pokemon.model().name,
+                         red_pokemon.model().name,
+                         blue_pokemon.model().attacks)
                     }
                 },
-                1 => (red_pokemon.model().name, blue_pokemon.model().name, red_pokemon.model().attacks),
-                2 => (blue_pokemon.model().name, red_pokemon.model().name, blue_pokemon.model().attacks),
-                _ => (blue_pokemon.model().name, red_pokemon.model().name, blue_pokemon.model().attacks),
+                1 => (red_pokemon.model().name,
+                      blue_pokemon.model().name,
+                      red_pokemon.model().attacks),
+                2 => (blue_pokemon.model().name,
+                      red_pokemon.model().name,
+                      blue_pokemon.model().attacks),
+                _ => (blue_pokemon.model().name,
+                      red_pokemon.model().name,
+                      blue_pokemon.model().attacks),
             };
 
             println!(">>>> {} is about to attack! Which move shall it use?", attacker);
@@ -48,7 +58,7 @@ fn main() {
                     blue_pokemon.stats().hp
                 },
                 2 => {
-                    red_pokemon.endure_attack(&blue_pokemon, blue_pokemon.model().attacks[choice]);
+                    red_pokemon.endure_attack(&blue_pokemon,blue_pokemon.model().attacks[choice]);
                     red_pokemon.stats().hp
                 },
                 _ => 0,
