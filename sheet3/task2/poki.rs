@@ -81,7 +81,7 @@ fn main() {
 
             if finished {
                 println!("{} fainted!", defender);
-                break; 
+                break;
             }
         }
         // Only necessary if speed should dictate who attacks first
