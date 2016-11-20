@@ -74,12 +74,12 @@ fn main() {
                 },
                 2 => {
                     turn = 1;
-                    !red_pokemon.is_alive() 
+                    !red_pokemon.is_alive()
                 },
                 _ => { true },
             };
 
-            if finished { 
+            if finished {
                 println!("{} fainted!", defender);
                 break; 
             }
@@ -186,7 +186,6 @@ impl TypeEffectiveness {
         }
     }
 }
-
 
 /// Types (sometimes called "elements") of the Pokemon universe. Each
 /// attack-move has exactly one type, Pokemons can have one or two types.
