@@ -101,7 +101,8 @@ impl Expr {
     fn parse(tokens: &[Token], mut index: usize) -> Result<(Self, usize), &str> {
         // node to integrate into the tree
         let mut node = Expr::Leaf(Token::Operation('+'));
-        // 0 = nothing, 1 = first number, 2 = second number, 3 = operator <= controls for checking if the input is valid
+        // 0 = nothing, 1 = first number, 2 = second number, 3 = operator
+        // controls for checking if the input is valid
         let mut current = 0;
 
         while index < tokens.len() {
