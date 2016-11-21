@@ -1,3 +1,7 @@
+// If you wish to exit the program type 'exit'
+// However, make sure that 'exit' is not in the same line
+// as a computation you wish to execute, because the program
+// will quit immediately!
 fn main() {
 
     // Small helper function to test very basic (!) functionality
@@ -10,35 +14,51 @@ fn main() {
             continue;
         }
         // If tokenize and parse don't result in an error evaluate the tree
-       test_tree(&input);
+       if test_tree(&input) {
+            break;
+        }
     }
 }
 
 // Makes a tree from the given string and evaluates it if possible
-fn test_tree(line: &str) {
+// Returns true if it is supposed to stop, else false
+fn test_tree(line: &str) -> bool {
     match tokenize(line) {
-        Ok(calc) => match Expr::parse(&calc, 0) {
-            Ok((tree, _)) => if let Some(result)=tree.evaluate(0){println!("Result: {}", result)},
-            Err(why) => println!("{}", why),
+        Ok(calc) => {
+            match Expr::parse(&calc, 0) {
+                Ok((tree, _)) => if let Some(result) = tree.evaluate(0) {
+                    println!("Result: {}", result)
+                },
+                Err(why) => println!("{}", why),
+            };
+            false
         },
-        Err(why) => println!("{}", why),
-    };
+        Err(why) => match why {
+            0 => { println!("Could not read number. Try again:"); false },
+            _ => true,
+        },
+    }
 }
 
 // Split input into Tokens
-fn tokenize(line: &str) -> Result<Vec<Token>, &str> {
+fn tokenize(line: &str) -> Result<Vec<Token>, u8> {
     let mut ret = Vec::new();
     let mut result = line.split_whitespace();
     // Go through every character in every string
     while let Some(elem) = result.next() {
+        if elem == "exit"
+        {
+            return Err(1);
+        }
+
         for c in elem.chars() {
             match c {
                 '(' => ret.push(Token::Open( '(' )),
                 ')' => ret.push(Token::Close( ')' )),
                 '+' | '-' | '*' | '/' | '%' => ret.push(Token::Operation(c)),
                 _ => if let Some(num) = c.to_digit(10) {
-                    ret.push(Token::Number(num as i32))
-                } else { return Err("Something went wrong when trying to parse a number!") },
+                    ret.push(Token::Number(num as i64))
+                } else { return Err(0) },
             }
         }
     };
@@ -81,22 +101,32 @@ impl Expr {
     fn parse(tokens: &[Token], mut index: usize) -> Result<(Self, usize), &str> {
         // node to integrate into the tree
         let mut node = Expr::Leaf(Token::Operation('+'));
-        // 0 = nothing, 1 = first number, 2 = second number, 3 = operator
-        // controls for checking if the input is valid
+        // 0 = nothing, 1 = first number, 2 = second number, 3 = operator <= controls for checking if the input is valid
         let mut current = 0;
 
         while index < tokens.len() {
             match tokens[index] {
                 // If we find a number, and the previous Token was an operator or
                 // this is the first Token, add a leaf to the tree
+                // If we find a number directly after a number set leaf data
+                // to their concatenation
                 Token::Number(i32) => match current {
-                    0 | 2 => { current = 1; node.add_leaf_child(tokens[index]) },
+                    0 => { current = 1; node.add_leaf_child(tokens[index]) },
+                    i @ 1 | i @ 2  => if let Some(children) = node.children_mut() {
+                        if !children[i-1].data_mut().set_number(tokens[index]) {
+                            return Err("Could not set number with several digits. Try again:");
+                        }
+                    } else {
+                            return Err("Could not change node children. Try again:");
+                    },
                     3 => { current = 2; node.add_leaf_child(tokens[index]) },
                     _ => return Err("Input incorrect (maybe the order was wrong). Try again:"),
                 },
                 // If we find an operator and the previous Token was a number change the node data
                 Token::Operation(char) => match current {
-                    1 => { current = 3; node.data_mut().set_operation(tokens[index]) },
+                    1 => if !node.data_mut().set_operation(tokens[index]) {
+                        return Err("Could not set operator. Try again:")
+                    } else { current = 3; },
                     _ => return Err("Input incorrect (maybe the order was wrong). Try again:"),
                 },
                 // If we find an opening bracket, and the previous Token was an operator or
@@ -133,7 +163,7 @@ impl Expr {
     /// Determines if this tree is just a leaf node.
     fn is_leaf(&self) -> bool {
         match *self {
-            Expr::Leaf(Token) => true,
+            Expr::Leaf(_) => true,
             _ => false,
         }
     }
@@ -194,7 +224,7 @@ impl Expr {
     }
 
     // Evaluate the tree recursively
-    pub fn evaluate(&self, mut result: i32) -> Option<i32> {
+    pub fn evaluate(&self, mut result: i64) -> Option<i64> {
         // Look at both children and return result depending on whether they are nested or not
         if let Some(next) = self.children() {
             // If there are two children
@@ -236,7 +266,7 @@ impl Expr {
             // If there is only one child
             } else if next[0].is_leaf() {
                 if let Ok(num) = next[0].data().number() {
-                    return Some(num);
+                    return Some(num as i64);
                 }
             } else if let Ok(op) = self.data().char_data() {
                 if let Some(num) = next[0].evaluate(result) {
@@ -263,7 +293,7 @@ impl Op {
         Op{ op: c }
     }
 
-    pub fn apply(&self, num_one: i32, num_two: i32) -> i32 {
+    pub fn apply(&self, num_one: i64, num_two: i64) -> i64 {
         match self.op {
             '+' => num_one + num_two,
             '-' => num_one - num_two,
@@ -280,32 +310,36 @@ enum Token {
     Operation(char),
     Open(char),
     Close(char),
-    Number(i32),
+    Number(i64),
 }
 
 impl Token {
 
-    fn is_operator(&self) -> bool {
+    // Returns true if Token is an operation
+    fn is_operation(&self) -> bool {
         match *self {
-            Token::Operation(char) => true,
+            Token::Operation(_) => true,
             _ => false,
         }
     }
 
+    // Returns true if Token is a number
     fn is_number(&self) -> bool {
         match *self {
-            Token::Number(i32) => true,
+            Token::Number(_) => true,
             _ => false,
         }
     }
 
-    fn number(&self) -> Result<i32, &str> {
+    // Get numerical data if possible
+    fn number(&self) -> Result<i64, &str> {
         match *self {
             Token::Number(data) => Ok(data),
             _ => Err("Tried to get a number from a Token not containing a number."),
         }
     }
 
+    // Get character data if possible
     fn char_data(&self) -> Result<char, &str> {
         match *self {
             Token::Open(data) | Token::Close(data) | Token::Operation(data) => Ok(data),
@@ -313,10 +347,28 @@ impl Token {
         }
     }
 
-    fn set_operation(&mut self, t: Token) {
-        *self = t;
+    // Reset operator, because we always start with a '+'
+    fn set_operation(&mut self, t: Token) -> bool {
+        match *self {
+            Token::Number(_) => false,
+            _ => { *self = t; true },
+        }
     }
 
+    // Change the number of a Token. Used when we get a number
+    // with more than one digit.
+    fn set_number(&mut self, t: Token) -> bool {
+        match *self {
+            Token::Number(before) => if let Ok(num) = t.number() {
+                *self = Token::Number((before * 10) + num);
+                true
+            }
+            else { println!("self.number() ging nicht"); false },
+            _ => { println!("keine zahl");false },
+        }
+    }
+
+    // was missing, compiler complained
     fn to_string(&self) -> String {
         match *self {
             Token::Number(data) => data.to_string(),
