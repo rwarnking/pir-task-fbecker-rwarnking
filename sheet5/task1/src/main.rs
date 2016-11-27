@@ -6,3 +6,4 @@ mod game;
 fn main() {
     game::fight("Red", "Blue");
 }
+

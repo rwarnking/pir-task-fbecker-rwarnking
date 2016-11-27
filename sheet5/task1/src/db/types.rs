@@ -109,3 +109,4 @@ pub struct Stats {
     /// Defense power against special attacks (like "Bubble Beam")
     pub special_defense: u16,
 }
+

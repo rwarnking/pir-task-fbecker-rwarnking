@@ -115,3 +115,4 @@ pub fn multiplier(me: TypeEffectiveness) -> f64 {
         TypeEffectiveness::SuperEffective => 2.0,
     }
 }
+

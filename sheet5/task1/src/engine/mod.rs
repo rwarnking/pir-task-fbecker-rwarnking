@@ -58,3 +58,4 @@ impl Pokemon {
         self.stats.hp > 0
     }
 }
+
