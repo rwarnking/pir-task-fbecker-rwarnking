@@ -176,3 +176,4 @@ pub const TACKLE: &'static Attack = &ATTACK_DB[0];
 pub const VINE_WHIP: &'static Attack = &ATTACK_DB[1];
 pub const EMBER: &'static Attack = &ATTACK_DB[2];
 pub const WATER_GUN: &'static Attack = &ATTACK_DB[3];
+
