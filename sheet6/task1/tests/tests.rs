@@ -18,3 +18,4 @@ fn test_option_trait() {
     assert_eq!(None, false.into_option(3));
     assert_eq!(Some(3), true.into_option(3));
 }
+
