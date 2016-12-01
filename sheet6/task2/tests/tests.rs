@@ -6,7 +6,7 @@ use task2::Vector2;
 fn vector_test() {
     let mut point : Vector2<i32> = Vector2::origin();
     assert_eq!(Vector2::<i32>{x: 0, y: 0}, point);
- 
+
     point = Vector2::unit_x();
     assert_eq!(Vector2::<i32>{x: 1, y: 0}, point);
 
