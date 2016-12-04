@@ -26,7 +26,8 @@ pub fn fight(player_one: &str, player_two: &str) {
             if poki.is_alive() {
                 false
             } else {
-                println!(">>>>> {} fainted!", Attr::Bold.fg(Color::Black).bg(Color::White).paint(poki.name()));
+                println!(">>>>> {} fainted!",
+                         Attr::Bold.fg(Color::Black).bg(Color::White).paint(poki.name()));
                 true
             }
         }
