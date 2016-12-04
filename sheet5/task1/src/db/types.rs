@@ -29,6 +29,7 @@ pub enum AttackCategory {
 /// effectiveness, the multipliers of the effectivenesses on both types
 /// are multiplied. As such, there can be 0.25 and 4.0 multipliers!
 #[derive(Debug, Clone, Copy)]
+#[allow(dead_code)]
 pub enum TypeEffectiveness {
     NotEffective,
     NotVeryEffective,
