@@ -17,7 +17,7 @@ impl<T> WithSwag<T> for T
     where T: fmt::Display
 {
     fn with_swag(self) -> Swagger<T> {
-        Swagger{ value: *self }
+        Swagger{ value: self }
     }
 }
 
