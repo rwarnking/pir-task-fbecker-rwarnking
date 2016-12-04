@@ -1,4 +1,4 @@
-pub mod db;
+mod db;
 mod engine;
 mod game;
 

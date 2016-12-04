@@ -6,9 +6,9 @@ use db::pokemon_by_name;
 use engine::Pokemon;
 use self::term_painter::Style;
 use self::term_painter::Painted;
-use self::term_painter::Attr::{Plain, Bold};
+use self::term_painter::Attr;
 use self::term_painter::ToStyle;
-use self::term_painter::Color::{Black, White, Red, Blue, Yellow, Magenta, Green};
+use self::term_painter::Color;
 
 /// Coordinates a fight between two players and their pokemon
 pub fn fight(player_one: &str, player_two: &str) {
@@ -26,7 +26,7 @@ pub fn fight(player_one: &str, player_two: &str) {
             if poki.is_alive() {
                 false
             } else {
-                println!(">>>>> {} fainted!", Bold.fg(Black).bg(White).paint(poki.name()));
+                println!(">>>>> {} fainted!", Attr::Bold.fg(Color::Black).bg(Color::White).paint(poki.name()));
                 true
             }
         }
@@ -151,8 +151,8 @@ fn print_pokemon_list() {
 /// and make the text red if the HP fall under 6
 fn paint_hp(life: u16) -> Painted<u16> {
     let color = match life {
-        0 ... 5 => Bold.fg(Red),
-        _ => Bold.fg(White).bg(Black),
+        0 ... 5 => Attr::Bold.fg(Color::Red),
+        _ => Attr::Bold.fg(Color::White).bg(Color::Black),
     };
 
     color.paint(life)
@@ -175,14 +175,14 @@ fn paint_pokemon(poki: &'static PokemonModel) -> Painted<&str> {
 /// Choose Style according to type
 fn get_type_color(t: Type) -> Style {
     match t {
-        Type::Fire => Plain.fg(Red),
-        Type::Water => Plain.fg(Blue),
-        Type::Grass => Plain.fg(Green),
-        Type::Electric => Plain.fg(Yellow),
-        Type::Poison => Plain.fg(Magenta),
+        Type::Fire => Attr::Plain.fg(Color::Red),
+        Type::Water => Attr::Plain.fg(Color::Blue),
+        Type::Grass => Attr::Plain.fg(Color::Green),
+        Type::Electric => Attr::Plain.fg(Color::Yellow),
+        Type::Poison => Attr::Plain.fg(Color::Magenta),
         // My console has a black background but in case there is
         // a white background specify a black background for white font
-        _ => Plain.fg(White).bg(Black),
+        _ => Attr::Plain.fg(Color::White).bg(Color::Black),
     }
 }
 
@@ -217,4 +217,3 @@ fn read_usize() -> usize {
         }
     }
 }
-
