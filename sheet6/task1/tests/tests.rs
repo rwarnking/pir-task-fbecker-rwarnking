@@ -11,6 +11,7 @@ fn test_clamp() {
 #[test]
 fn test_sum_product() {
     assert_eq!((4, 4), sum_product(2, 2));
+    assert_eq!((6.0, 9.0), sum_product(3.0, 3.0));
 }
 
 #[test]
