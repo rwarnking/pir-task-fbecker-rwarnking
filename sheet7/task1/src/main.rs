@@ -51,3 +51,4 @@ impl<T> Iterator for Fibonacci<T>
         Some(self.current)
     }
 }
+

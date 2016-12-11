@@ -75,3 +75,4 @@ fn get_command_input() -> Result<(String, String), CpErrors>{
 
     Err(CpErrors::SomethingHappened)
 }
+
