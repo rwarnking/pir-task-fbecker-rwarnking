@@ -1,0 +1,12 @@
+[package]
+name = "task1"
+version = "0.1.0"
+authors = ["Franziska Becker <buecher.apps@gmail.com>"]
+
+[dependencies]
+num-traits = "0.1.36"
+
+[[test]]
+name = "test"
+path = "tests/tests.rs"
+
