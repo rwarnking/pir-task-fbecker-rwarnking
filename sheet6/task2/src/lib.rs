@@ -26,7 +26,7 @@ impl<T> Vector2<T>
     }
 }
 
-/// Overwrites '+' operator for the type 'Vector2', vector multiplication
+/// Overwrites '+' operator for the type 'Vector2'
 impl<T> Add for Vector2<T>
     where T: Num + Copy
 {
