@@ -30,14 +30,11 @@ fn sort_by<T, F>(arr: &mut [T], mut f: F) -> &[T]
 {
     // Only sort when array contains elements
     if arr.len() > 0 {
-        let mut min = arr[0];
-        let mut tmp = min;
-
         for start in 0..arr.len() {
-            min = arr[start];
+            let mut min = arr[start];
             for index in start+1..arr.len() {
                 if f(arr[index], min) == Ordering::Less {
-                    tmp = min;
+                    let tmp = min;
                     min = arr[index];
                     arr[start] = min;
                     arr[index] = tmp;
