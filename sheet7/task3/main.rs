@@ -16,3 +16,4 @@ fn main() {
     let orig_all = my_test.iter().all(|x| x % 2 == 0);
     println!("all(): {}, fold(): {}", orig_all, fold_all);
 }
+

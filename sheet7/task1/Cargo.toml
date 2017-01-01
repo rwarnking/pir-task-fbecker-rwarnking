@@ -5,3 +5,4 @@ authors = ["ArielMant0 <buecher.apps@gmail.com>", "rwarnking <rwarnking@uos.de>"
 
 [dependencies]
 num-traits = "0.1.36"
+
