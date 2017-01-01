@@ -21,7 +21,7 @@ fn main() {
 trait Times {
     type Input;
 
-    fn times<F>(self, mut f: F) where F: FnMut(Self::Input);
+    fn times<F>(self, f: F) where F: FnMut(Self::Input);
 }
 
 /// Implementation of the trait 'Times' for all integers (signed and unsigned)
