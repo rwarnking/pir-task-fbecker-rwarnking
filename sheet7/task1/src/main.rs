@@ -18,7 +18,7 @@ impl<T> Fibonacci<T>
     where T: Unsigned + Copy + fmt::Display
 {
     fn new_fib() -> Self {
-        Fibonacci::<T>{ current: T::zero() , last: T::zero() }
+        Fibonacci{ current: T::zero() , last: T::zero() }
     }
 
     pub fn show_fib(end: T) {
@@ -51,4 +51,3 @@ impl<T> Iterator for Fibonacci<T>
         Some(self.current)
     }
 }
-

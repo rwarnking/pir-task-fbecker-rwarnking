@@ -3,7 +3,7 @@ use std::collections::HashSet;
 fn main() {
     let test_pal = "ben";
     let test_count = &["d aldka", "odlw"];
-    let test_sum = &[2, -4, 5, 1, 0];
+    let test_sum = &[5, 5, 0, 5];
 
     println!("Factorial for 3: {}" ,factorial(3));
     println!("Is {} a palindrome? : {}", test_pal, is_palindrome(test_pal));
@@ -28,20 +28,36 @@ fn is_palindrome(word: &str) -> bool {
 
 /// Counts number of differing character in a slice of string slices
 fn used_chars_count(words: &[&str]) -> usize {
-    let count: HashSet<char> = words.iter()
-                                    .flat_map(|&x|
-                                        x.chars()
-                                        .filter(|a| !a.is_whitespace()))
-                                    .collect();
-
-    count.len()
+    words.iter()
+        .flat_map(|&x|
+            x.chars()
+             .filter(|a| !a.is_whitespace()))
+        .collect::<HashSet<char>>()
+        .len()
 }
 
 
 /// Looks for greatest subsequencial sum in a slice
 fn greatest_subsequencial_sum(numbers: &[i64]) -> &[i64] {
-    let subslices = numbers.split(|&num| num <= 0);
-    subslices.max_by_key::<i64, _>(|num| num.iter().sum()).unwrap()
+    match numbers.len() {
+        0 => numbers,
+        _ => {
+            let mut max = Vec::new();
+
+            for size in 1..numbers.len()+1 {
+                max.push(numbers.windows(size)
+                                .max_by_key::<i64, _>(|num| num.iter().sum()).unwrap());
+            }
+            let result = max.iter()
+                            .max_by_key::<i64, _>(|num| num.iter().sum()).unwrap();
+
+            if result.iter().sum::<i64>() > 0 {
+                result
+            } else {
+                &[]
+            }
+        }
+    }
 }
 
 /// Encodes string with very useful and
@@ -76,8 +92,7 @@ fn ascii_add(item: char, add: u8) -> char {
 fn in_range(x: u8, min: u8, max: u8) -> u8 {
     if x > max {
         in_range(min + (x - max - 1), min, max)
-    }
-    else {
+    } else {
         x
     }
 }
@@ -110,15 +125,15 @@ fn test_greatest_subsequencial_sum() {
 
 #[test]
 fn test_rot13() {
-    assert_eq!(&rot13("hello"), "uryyb");
-    assert_eq!(&rot13("uryyb"), "hello");
+    assert_eq!(rot13("hello"), "uryyb");
+    assert_eq!(rot13("uryyb"), "hello");
 
     assert_eq!(
-        &rot13("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"),
+        rot13("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"),
         "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm"
     );
 
-    assert_eq!(&rot13("peter"), "crgre");
+    assert_eq!(rot13("peter"), "crgre");
 }
 
 #[test]

@@ -2,18 +2,17 @@ fn main() {
     let my_test = [2, 4, 0];
 
     // product() simulation
-    let mut fold = my_test.iter().fold(1, |pro, x| pro * x );
-    let mut orig = my_test.iter().product();
-    println!("product(): {}, fold(): {}", orig, fold);
+    let fold_product = my_test.iter().fold(1, |pro, x| pro * x );
+    let orig_product: i32 = my_test.iter().product();
+    println!("product(): {}, fold(): {}", orig_product, fold_product);
 
     // max() simulation
-    fold = my_test.iter().fold(0, |max, &x| if x > max {x} else {max});
-    orig = *my_test.iter().max().unwrap();
-    println!("max(): {}, fold(): {}", orig, fold);
+    let fold_max = my_test.iter().fold(0, |max, &x| if x > max {x} else {max});
+    let orig_max = *my_test.iter().max().unwrap();
+    println!("max(): {}, fold(): {}", orig_max, fold_max);
 
     // all() simulation
-    fold = my_test.iter().fold(1, |max, &x| if x % 2 != 0 {0} else {max});
-    let all = my_test.iter().all(|x| x % 2 == 0);
-    println!("all(): {}, fold(): {}", all, fold==1);
+    let fold_all = my_test.iter().fold(true, |test, &x| test && x % 2 == 0 );
+    let orig_all = my_test.iter().all(|x| x % 2 == 0);
+    println!("all(): {}, fold(): {}", orig_all, fold_all);
 }
-
