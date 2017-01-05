@@ -5,4 +5,3 @@ authors = ["ArielMant0 <buecher.apps@gmail.com>"]
 
 [dependencies]
 num-traits = "0.1.36"
-
