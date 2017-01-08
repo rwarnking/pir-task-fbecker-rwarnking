@@ -1,3 +1,14 @@
+/// Macro that handles an Option
+macro_rules! try_opt {
+    ($elem:expr) => {
+        {
+            match $elem {
+                Some(e) => e,
+                None => return None,
+            }
+        }
+    };
+}
 
 fn main() {
     println!("consistent: {:?}", is_home_consistent());
