@@ -23,8 +23,8 @@ fn main() {
         println!("\t{:?} => {:?}", key, value);
     }
 
-    let three: HashMap<i64, Vec<i32>> 
-      = hash_map!(-3000000000000 => vec![1, 2], -1 => vec![4, -1, 6], -79 => vec![]);
+    let three: HashMap<i64, Vec<i32>> =
+        hash_map!(-3000000000000 => vec![1, 2], -1 => vec![4, -1, 6], -79 => vec![]);
     println!("(int, Vector):");
     for (key, value) in three {
         println!("\t{:?} => {:?}", key, value);
