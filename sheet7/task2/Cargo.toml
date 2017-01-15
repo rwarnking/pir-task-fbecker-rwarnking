@@ -1,0 +1,7 @@
+[package]
+name = "task2"
+version = "0.1.0"
+authors = ["ArielMant0 <buecher.apps@gmail.com>", "rwarnking <rwarnking@uos.de>"]
+
+[dependencies]
+
