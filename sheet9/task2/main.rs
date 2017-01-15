@@ -1,5 +1,15 @@
 use std::fmt::{Debug, Display, UpperHex, LowerHex, Binary, Octal, UpperExp, LowerExp};
 
+macro_rules! impl_swagger_print {
+    ($format:expr, $trait_name:ident) => {
+        impl<T: std::fmt::$trait_name> $trait_name for Swagger<T> {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+                write!(f, concat!("yolo ", $format, " swag"), self.0)
+            }
+        }
+    };
+}
+
 fn main() {
     // Testing
     println!("Display (0.25): {}", Swagger(0.25));
@@ -22,13 +32,3 @@ impl_swagger_print!("{:e}", LowerExp);
 impl_swagger_print!("{:E}", UpperExp);
 
 struct Swagger<T>(pub T);
-
-macro_rules! impl_swagger_print {
-    ($format:expr, $trait_name:ident) => {
-        impl<T: std::fmt::$trait_name> $trait_name for Swagger<T> {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
-                write!(f, concat!("yolo ", $format, " swag"), self.0)
-            }
-        }
-    };
-}
