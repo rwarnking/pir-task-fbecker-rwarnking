@@ -1,8 +1,6 @@
 use std::fmt::{Debug, Display, UpperHex, LowerHex, Binary, Octal, UpperExp, LowerExp};
 
 fn main() {
-    impl_all();
-
     // Testing
     println!("Display (0.25): {}", Swagger(0.25));
     println!("Debug (0.25): {:?}", Swagger(0.25));
@@ -14,25 +12,23 @@ fn main() {
     println!("Octal (156): {:o}", Swagger(156));
 }
 
+impl_swagger_print!("{}", Display);
+impl_swagger_print!("{:?}", Debug);
+impl_swagger_print!("{:X}", UpperHex);
+impl_swagger_print!("{:x}", LowerHex);
+impl_swagger_print!("{:b}", Binary);
+impl_swagger_print!("{:o}", Octal);
+impl_swagger_print!("{:e}", LowerExp);
+impl_swagger_print!("{:E}", UpperExp);
+
 struct Swagger<T>(pub T);
 
 macro_rules! impl_swagger_print {
     ($format:expr, $trait_name:ident) => {
         impl<T: std::fmt::$trait_name> $trait_name for Swagger<T> {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
-                write!(f, $format, self.0)
+                write!(f, concat!("yolo ", $format, " swag"), self.0)
             }
         }
     };
-}
-
-fn impl_all() {
-    impl_swagger_print!("yolo {:?} swag", Debug);
-    impl_swagger_print!("yolo {} swag", Display);
-    impl_swagger_print!("yolo {:X} swag", UpperHex);
-    impl_swagger_print!("yolo {:x} swag", LowerHex);
-    impl_swagger_print!("yolo {:b} swag", Binary);
-    impl_swagger_print!("yolo {:o} swag", Octal);
-    impl_swagger_print!("yolo {:e} swag", LowerExp);
-    impl_swagger_print!("yolo {:E} swag", UpperExp);
 }
