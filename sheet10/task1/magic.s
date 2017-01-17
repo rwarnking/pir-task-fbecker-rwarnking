@@ -23,21 +23,3 @@ magic:
     pop     rbp         # gets former value of rbp from stack and stores it in rbp
     ret                 # return to program
 
-
-# rough draft of what the function "might" look like
-fn magic(param: u64) -> bool {
-    let mut a = param;
-    let mut b = 2;
-    let mut div = 0;
-
-    do  {
-        if b >= a {
-            true
-        }
-        div = a % b;
-        a /= b;
-        b += 1;
-    } while (div != 0)
-
-    false
-}
