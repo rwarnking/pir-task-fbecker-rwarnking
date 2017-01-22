@@ -15,7 +15,7 @@ export RUSTFLAGS="--deny warnings"
 # generell die CI-Zeiten zu verringern, wechseln wir nie das Verzeichnis und
 # kompilieren immer nur die Aufgaben des aktuellsten Aufgabenblatts.
 
-current_sheet=$(ls -d sheet* | tail -n1)
+current_sheet=$(ls -dv sheet* | tail -n1)
 
 if [ -z "$current_sheet" ]; then
     echo ""
