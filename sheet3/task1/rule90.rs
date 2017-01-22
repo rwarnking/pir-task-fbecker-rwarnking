@@ -51,20 +51,21 @@ fn read_input() -> Vec<bool> {
 
     // construct bool vector from string
     let mut output = Vec::new();
-    for letter in input.as_str().chars() {
+
+    for letter in input.chars() {
         if letter == '0' {
             output.push(false);
         } else if letter == '1' {
             output.push(true);
         }
     }
-    output.to_owned()
+    output
 }
 
 // returns a vector containing the next step for each cell of 'old' according to the rules
 fn next_step(old: &[bool]) -> Vec<bool> {
     let mut changed = Vec::new();
-    let old_owned = old.to_owned();
+    let old_owned = old;
 
     for index in 0..old_owned.len() {
         // if we are at the first element, set previous element as the last
@@ -78,7 +79,7 @@ fn next_step(old: &[bool]) -> Vec<bool> {
         };
         changed.push(new_value);
     }
-    changed.to_owned()
+    changed
 }
 
 #[test]

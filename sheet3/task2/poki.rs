@@ -1,5 +1,4 @@
 //! Task 3.2: Pokemon
-use std::cell::Cell;
 
 fn main() {
     let red = choose_pokemon("Red");
