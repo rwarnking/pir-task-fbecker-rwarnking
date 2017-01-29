@@ -1,5 +1,7 @@
-use game_logic::Symbol;
+use game_logic::{Symbol, Board, Position};
 use std::fmt::{Formatter, Display, Error};
+use game_logic::ai::get_ai_move;
+use interface::get_human_move;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum PlayerType {
@@ -10,28 +12,35 @@ pub enum PlayerType {
 
 #[derive(Debug, Copy, Clone)]
 pub struct Player {
-    name: PlayerType,
+    ptype: PlayerType,
     sym: Symbol
 }
 
 impl Player {
     // Returns an instance of a Player with the given PlayerType
     pub fn new(p: PlayerType, s: Symbol) -> Self {
-        Player { name: p , sym: s}
+        Player { ptype: p , sym: s}
     }
 
-    pub fn name(&self) -> PlayerType {
-        self.name
+    pub fn ptype(&self) -> PlayerType {
+        self.ptype
     }
 
     pub fn symbol(&self) -> Symbol {
         self.sym
     }
+
+    pub fn get_move(&self, board: &Board) -> Position {
+        match self.ptype {
+            PlayerType::Human => get_human_move(board),
+            _ => get_ai_move(board, *self)
+        }
+    }
 }
 
 impl Display for Player {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        let content = match self.name {
+        let content = match self.ptype {
             PlayerType::Human => "Human",
             PlayerType::Dumb => "Dumb AI",
             PlayerType::Smart => "Smart AI"

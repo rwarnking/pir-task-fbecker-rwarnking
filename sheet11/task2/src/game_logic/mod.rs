@@ -44,7 +44,7 @@ impl Position {
         }
     }
 
-    fn pos(a: u8, b: u8) -> Self {
+    pub fn pos(a: u8, b: u8) -> Self {
         match (a, b) {
             (1, 1) => TopLeft,
             (1, 2) => TopCenter,
@@ -107,7 +107,7 @@ pub struct Board {
 }
 
 impl Board {
-    // return new board where every field is empty
+    /// return new board where every field is empty
     pub fn new() -> Self {
         let mut h = HashMap::with_capacity(9);
         for outer in 1..4 {
@@ -118,22 +118,22 @@ impl Board {
         Board { fields: h }
     }
 
-    // get the symbol of the board at position 'pos'
+    /// get the symbol of the board at position 'pos'
     pub fn get_symbol(&self, pos: Position) -> Symbol {
         *self.fields.get(&pos).unwrap()
     }
 
-    // mark a field on the board
+    /// mark a field on the board
     pub fn mark(&mut self, s: Symbol, pos: Position) {
         self.fields.insert(pos, s);
     }
 
-    // return whether field at pos is empty or not
+    /// return whether field at pos is empty or not
     pub fn is_empty(&self, pos: Position) -> bool {
         self.fields.get(&pos) == Some(&Symbol::Empty)
     }
 
-    // return wether one player marked a line of three fields
+    /// return wether one player marked a line of three fields
     pub fn player_won(&self) -> bool {
         WIN_CONDITIONS.iter()
                       .any(|&line| self.fields.get(&line[0]).unwrap() != &Symbol::Empty &&
@@ -143,18 +143,17 @@ impl Board {
                                    self.fields.get(&line[2]))
     }
 
-    // return whether all fields are marked
+    /// return whether all fields are marked
     pub fn is_full(&self) -> bool {
         self.fields.iter()
                    .all(|elem| elem.1 != &Symbol::Empty)
     }
 }
 
-#[allow(unused_must_use)]
 impl Display for Board {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "   1  2  3\n");
-        write!(f, "--|--|--|--|\n");
+        try!(write!(f, "   1  2  3\n"));
+        try!(write!(f, "--|--|--|--|\n"));
         for outer in 1..4 {
             let c = match outer {
                 1 => 'a',
@@ -162,10 +161,10 @@ impl Display for Board {
                 3 => 'c',
                 _ => unreachable!()
             };
-            write!(f, "{} |{} |{} |{} |\n", c,
+            try!(write!(f, "{} |{} |{} |{} |\n", c,
                 self.fields.get(&Position::pos(outer, 1)).unwrap(),
                 self.fields.get(&Position::pos(outer, 2)).unwrap(),
-                self.fields.get(&Position::pos(outer, 3)).unwrap());
+                self.fields.get(&Position::pos(outer, 3)).unwrap()));
         }
         write!(f, "--|--|--|--|\n")
     }

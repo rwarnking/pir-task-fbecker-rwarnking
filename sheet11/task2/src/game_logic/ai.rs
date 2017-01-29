@@ -20,7 +20,7 @@ fn get_dumb_move(board: &Board) -> Position {
 /// Returns a move for the AI, depending on which AI it is.
 pub fn get_ai_move(board: &Board, p: Player) -> Position {
     // if ai is stupid
-    if p.name() == PlayerType::Dumb {
+    if p.ptype() == PlayerType::Dumb {
         get_dumb_move(board)
     // if ai is smart
     } else {

@@ -1,6 +1,6 @@
 extern crate clap;
 
-use game_logic::Symbol;
+use game_logic::{Position, Symbol, OFFSET, Board};
 use game_logic::types::{PlayerType, Player};
 use self::clap::{App, Arg};
 
@@ -56,4 +56,26 @@ pub fn read_position_input() -> Option<(char, u8)> {
     }
 
     None
+}
+
+/// Reads and returns the move for the human player
+pub fn get_human_move(board: &Board) -> Position {
+    loop {
+        match read_position_input() {
+            Some(pos) => {
+                if !Position::is_pos(pos.0, pos.1) {
+                    println!("Please enter a position on the board!");
+                    println!("\"{:?}\" is not a valid position", pos);
+                } else if !board.is_empty(Position::pos(pos.0 as u8 - OFFSET, pos.1)) {
+                    println!("Please enter a position on the board that is still empty!");
+                }
+                else {
+                    return Position::pos(pos.0 as u8 - OFFSET, pos.1)
+                }
+            },
+            None => {
+                println!("Please enter a valid position (a-c1-3) on the board!");
+            }
+        }
+    }
 }
