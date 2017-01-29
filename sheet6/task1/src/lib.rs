@@ -6,10 +6,12 @@ use num_traits::Num;
 pub fn clamp<T>(value: T, min: T, max: T) -> T
     where T: PartialOrd + Copy
 {
-    match value {
-        num if num < min => min,
-        num if num > max => max,
-        _ => value,
+    if value < min {
+        min
+    } else if value > max {
+        max
+    } else {
+        value
     }
 }
 
@@ -33,4 +35,3 @@ impl<T> IntoOptionExt<T> for bool {
         }
     }
 }
-
