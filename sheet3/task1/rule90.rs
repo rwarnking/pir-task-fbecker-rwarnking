@@ -51,6 +51,7 @@ fn read_input() -> Vec<bool> {
 
     // construct bool vector from string
     let mut output = Vec::new();
+
     for letter in input.chars() {
         if letter == '0' {
             output.push(false);

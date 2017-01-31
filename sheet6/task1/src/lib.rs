@@ -35,4 +35,3 @@ impl<T> IntoOptionExt<T> for bool {
         }
     }
 }
-

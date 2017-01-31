@@ -48,4 +48,3 @@ impl<T> Mul<T> for Vector2<T>
         Vector2 { x : self.x * other, y: self.y * other }
     }
 }
-
